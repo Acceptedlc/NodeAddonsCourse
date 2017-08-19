@@ -9,4 +9,4 @@ void init(v8::Local<v8::Object> exports) {
     NODE_SET_METHOD(exports, "hello", hello);
 }
 
-NODE_MODULE(addon, init)
+NODE_MODULE(hello, init)
