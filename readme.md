@@ -2,4 +2,5 @@
 
 #### node v6
 
-1. [Hello World](./synchronizationFunc)
+* [Hello World](./synchronizationFunc)
+* [Node and V8（node使用v8扩展js功能）](./nodeRequireSystem)
