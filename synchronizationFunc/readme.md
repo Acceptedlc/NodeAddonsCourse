@@ -34,3 +34,7 @@ NODE_MODULE(hello, init)//所有node模块必须提供一个初始化方法
 }
 ```
 
+
+### 3. 编译
+
+node-gyp configure build
