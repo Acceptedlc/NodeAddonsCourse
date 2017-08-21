@@ -4,7 +4,7 @@
       'target_name': 'helloworld',
       'type': 'executable',
       'sources': [
-        'src/main.cpp',
+        'src/helloworld.cpp',
       ],
     },
   ],
