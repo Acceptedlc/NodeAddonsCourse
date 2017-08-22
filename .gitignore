@@ -3,4 +3,5 @@
 synchronizationFunc/build
 libuv_demo/build
 gypDemo/helloworld/build
+dealWithJsParams/build
 .vscode
