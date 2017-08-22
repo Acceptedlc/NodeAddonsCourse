@@ -44,7 +44,7 @@ void AvgRainfall(const FunctionCallbackInfo<Value> & args) {
     Isolate* isolate = args.GetIsolate();
     
     location loc = unpack_location(isolate, args);
-    double avg = avg_rainfall(loc);
+    double avg = loc.avg_rainfall();
   
     Local<Number> retval = Number::New(isolate, avg);
     args.GetReturnValue().Set(retval);

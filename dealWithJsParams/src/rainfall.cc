@@ -2,10 +2,19 @@
 #include <algorithm>
 #include <cmath>
 
-double avg_rainfall(location & loc) {
+double location::avg_rainfall() {
     double total = 0;
-    for (const auto &sample : loc.samples) {
+    for (const auto &sample : this->samples) {
       total += sample.rainfall;
     }
-    return total / loc.samples.size();
+    return total / this->samples.size();
+}
+
+sample::sample() {
+  date = ""; rainfall = 0;
+}
+
+sample::sample (string d, double r)  {
+  date = d;
+  rainfall = r;
 }
