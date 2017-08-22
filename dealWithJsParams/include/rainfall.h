@@ -4,10 +4,16 @@ using namespace std;
 
 class sample {
 public:
-    sample (); // in rainfall.cc
-    sample (string d, double r) ; // in rainfall.cc
-    string date;
-    double rainfall;
+  sample () {
+    date = ""; rainfall = 0;
+  }
+  sample (string d, double r) {
+    date = d;
+    rainfall = r;
+  }
+
+  string date;
+  double rainfall;
 };
 
 class location {

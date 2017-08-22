@@ -1,25 +1,24 @@
 #include <node.h>
 #include <v8.h>
 #include "rainfall.h" 
+#include <iostream>
 
 using namespace v8;
 
 sample unpack_sample(Isolate * isolate, const Handle<Object> sample_obj) {
-    sample s;
-    Handle<Value> date_Value = 
-                 sample_obj->Get(String::NewFromUtf8(isolate, "date"));
-    Handle<Value> rainfall_Value = 
-                sample_obj->Get(String::NewFromUtf8(isolate, "rainfall"));
-  
-    v8::String::Utf8Value utfValue(date_Value);
-    s.date = std::string(*utfValue);
-   
-    // Unpack the numeric rainfall amount directly from V8 value
-    s.rainfall = rainfall_Value->NumberValue();
-    return s;
-  }
+  sample s;
+  Handle<Value> date_Value = sample_obj->Get(String::NewFromUtf8(isolate, "date"));
+  Handle<Value> rainfall_Value = sample_obj->Get(String::NewFromUtf8(isolate, "rainfall"));
 
-location unpack_location(Isolate * isolate, const v8::FunctionCallbackInfo<v8::Value>& args) {
+  v8::String::Utf8Value utfValue(date_Value);
+  s.date = std::string(*utfValue);
+
+  // Unpack the numeric rainfall amount directly from V8 value
+  s.rainfall = rainfall_Value->NumberValue();
+  return s;
+}
+
+location unpack_location(Isolate * isolate, const FunctionCallbackInfo<Value>& args) {
     location loc;
     Handle<Object> location_obj = Handle<Object>::Cast(args[0]);
     Handle<Value> lat_Value = 
@@ -41,7 +40,7 @@ location unpack_location(Isolate * isolate, const v8::FunctionCallbackInfo<v8::V
     return loc;
   }
 
-void AvgRainfall(const v8::FunctionCallbackInfo<v8::Value> & args) {
+void AvgRainfall(const FunctionCallbackInfo<Value> & args) {
     Isolate* isolate = args.GetIsolate();
     
     location loc = unpack_location(isolate, args);
