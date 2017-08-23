@@ -4,4 +4,5 @@ synchronizationFunc/build
 libuv_demo/build
 gypDemo/helloworld/build
 dealWithJsParams/build
+returnObject2Js/build
 .vscode
