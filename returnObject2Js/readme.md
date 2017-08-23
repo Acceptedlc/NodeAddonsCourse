@@ -1,99 +1,114 @@
 ## 场景说明
-计算某个地区的平均降雨量（经纬度作为地区的唯一标识）
+
+延续上一个例子，这里增加一个新的函数返**data_rainfall**，返回的是一个js的object
 
 
 ## js调用
 
 ```
-var rainfall = require("./build/Release/rainfall.node");
-var location = {
-    latitude : 40.71, longitude : -74.01,
-       samples : [
-          { date : "2014-06-07", rainfall : 2 },
-          { date : "2014-08-12", rainfall : 0.5}
-       ] };
+//rainfall.js
 
-console.log("Average rain fall = " + rainfall.avg_rainfall(location) + "cm");
+var data = rainfall.data_rainfall(location);
+
+console.log("Mean = " + data.mean)
+console.log("Median = " + data.median);
+console.log("Standard Deviation = " + data.standard_deviation);
+console.log("N = " + data.n);
 ```
 
 ## 定义类型
 
-__location:__ 
+__rain_result:__ 在头文件中声明返回object的c++类型
 
 ```
-class location {
+class rain_result {
 public:
-  double longitude;
-  double latitude;
-  vector<sample> samples; //观测到的样本数据
-  double avg_rainfall();
+    float median;
+    float mean;
+    float standard_deviation;
+    int n;
 };
-```
-
-
-
-__sample__
 
 ```
-class sample {
-public:
-  sample ();
-  sample (string d, double r);
 
-  string date;
-  double rainfall;
-};
-```
+
+
 
 ## 实现类
 
+**给localtion，增加实现的方法**
+
 ```
-double location::avg_rainfall() {
-    double total = 0;
-    for (const auto &sample : this->samples) {
-      total += sample.rainfall;
-    }
-    return total / this->samples.size();
+rain_result location::calc_rain_stats() {
+	rain_result result;
+	double ss = 0;
+	double total = 0;
+	
+	result.n = this->samples.size();
+
+	for (const auto &sample : this->samples) {
+   	 total += sample.rainfall;
+  	}
+  	result.mean = total / this->samples.size();
+  	
+  	for (const auto &sample : this->samples) {
+   	 ss += pow(sample.rainfall - result.mean, 2);
+  	}
+  	result.standard_deviation = sqrt(ss/(result.n-1));
+
+  	std::sort(this->samples.begin(), this->samples.end());
+	if (result.n %2 == 0) {
+		result.median = (this->samples[result.n / 2 - 1].rainfall + this->samples[result.n / 2].rainfall) / 2;
+	}
+	else {
+		result.median = this->samples[result.n / 2].rainfall;
+	}
+	return result;
 }
 
-sample::sample() {
-  date = ""; rainfall = 0;
-}
-
-sample::sample (string d, double r)  {
-  date = d;
-  rainfall = r;
-}
 ```
 
 ## 与node进行绑定
 
-__绑定模块初始化函数__
 
-```
-NODE_MODULE(rainfall, init)  
-```
-
-__初始化函数实现，给exports上增加一个avg_rainfall方法__
+__初始化函数实现，给exports上增加一个data_rainfall方法__
 
 ```
 void init(Handle <Object> exports, Handle<Object> module) {
-    NODE_SET_METHOD(exports, "avg_rainfall", AvgRainfall);
+	NODE_SET_METHOD(exports, "data_rainfall", RainfallData);
 }
 ```
 
 
-__AvgRainfall实现__
+__RainfallData实现__
 
 ```
-void AvgRainfall(const FunctionCallbackInfo<Value> & args) {
-    Isolate* isolate = args.GetIsolate(); //获取v8 实例
-    
-    location loc = unpack_location(isolate, args); //将js数据转化为，刚刚生命的c++类
-    double avg = loc.avg_rainfall(); //计算平均降雨量
+void RainfallData(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  //获取虚拟机
+  Isolate* isolate = args.GetIsolate();
   
-    Local<Number> retval = Number::New(isolate, avg); //将c语言返回值，变为js的number
-    args.GetReturnValue().Set(retval); //设置返回值
+  // 将js传递进来的参数，转化为c++对应的类型
+  location loc = unpack_location(isolate, args);   
+  
+  // 调用刚刚实现的方法，并且获得一个rain_result类型的返回值
+  rain_result result = loc.calc_rain_stats(); 
+  
+  // 在v8的堆上创建一个对象
+  Local<Object> obj = Object::New(isolate);
+
+  // 设置对象的key 和value
+  obj->Set(String::NewFromUtf8(isolate, "mean"), 
+    Number::New(isolate, result.mean));
+  obj->Set(String::NewFromUtf8(isolate, "median"), 
+    Number::New(isolate, result.median));
+  obj->Set(String::NewFromUtf8(isolate, "standard_deviation"), 
+    Number::New(isolate, result.standard_deviation));
+  obj->Set(String::NewFromUtf8(isolate, "n"), 
+    Integer::New(isolate, result.n));
+
+  // 设置返回值
+  args.GetReturnValue().Set(obj);
+
 }
 ```
 
