@@ -66,8 +66,7 @@ static void WorkAsync(uv_work_t *req){
   }
 }
 
-static void WorkAsyncComplete(uv_work_t *req,int status)
-{
+static void WorkAsyncComplete(uv_work_t *req,int status){
   Isolate * isolate = Isolate::GetCurrent();
   
   v8::HandleScope handleScope(isolate);
@@ -89,8 +88,6 @@ static void WorkAsyncComplete(uv_work_t *req,int status)
   work->callback.Reset();
   // 删除堆中的work
   delete work;
-
-  
 }
 
 void CalculateResultsAsync(const v8::FunctionCallbackInfo<v8::Value>&args) {

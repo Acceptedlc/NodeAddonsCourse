@@ -82,5 +82,30 @@ static void WorkAsync(uv_work_t *req){
 ## 任务结束主线程执行的函数
 
 
+```
+static void WorkAsyncComplete(uv_work_t *req,int status){
+  Isolate * isolate = Isolate::GetCurrent();
+  
+  v8::HandleScope handleScope(isolate);
 
+  Local<Array> result_list = Array::New(isolate);
+  Work *work = static_cast<Work *>(req->data);
+
+  for (unsigned int i = 0; i < work->results.size(); i++ ) {
+    Local<Object> result = Object::New(isolate);
+    pack_rain_result(isolate, result, work->results[i]);
+    result_list->Set(i, result);
+  }
+
+  Handle<Value> argv[] = { Null(isolate) , result_list };
+  //调用回调函数
+  Local<Function>::New(isolate, work->callback)->Call(isolate->GetCurrentContext()->Global(), 2, argv);
+
+  // 删除CalculateResultsAsync 创建的Persistent Handle
+  work->callback.Reset();
+  // 删除堆中的work
+  delete work;
+}
+
+```
 
