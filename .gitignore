@@ -8,4 +8,5 @@ returnObject2Js/build
 drealArray/build
 asyncCallback/build
 objectFactory/build
+functionFactory/build
 .vscode
