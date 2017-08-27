@@ -7,4 +7,5 @@ dealWithJsParams/build
 returnObject2Js/build
 drealArray/build
 asyncCallback/build
+objectFactory/build
 .vscode
