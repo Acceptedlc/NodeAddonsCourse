@@ -8,6 +8,7 @@
 * [addone 返回Object到js](./returnObject2Js)
 * [addone 处理数组](./drealArray)
 * [addone 使用libuv异步处理大规模计算](./asyncCallback)
+* [addone 通过c++生成一个js的object，返回给js](./objectFactory)
 * GYP
 	* [在mac以及linux，使用gyp编译helloworld](./gypDemo/helloworld)
 * v8
