@@ -9,4 +9,5 @@ drealArray/build
 asyncCallback/build
 objectFactory/build
 functionFactory/build
+wrapperCppObject/build
 .vscode

@@ -14,5 +14,6 @@
 	* [在mac以及linux，使用gyp编译helloworld](./gypDemo/helloworld)
 * v8
 	* [通过Handle存取v8管理的内存](./v8/通过Handle访问v8内存.md)
+	* [FunctionTemplate](./wrapperCppObject/functionTemplate.md)
 
 	
